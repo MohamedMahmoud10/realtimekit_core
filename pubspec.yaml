@@ -12,8 +12,6 @@ flutter:
     platforms:
       android:
         default_package: realtimekit_core_android
-      ios:
-        default_package: realtimekit_core_ios
   assets:
     - pubspec.yaml
 
