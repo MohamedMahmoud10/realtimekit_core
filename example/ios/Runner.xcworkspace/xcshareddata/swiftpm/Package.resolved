@@ -1,0 +1,15 @@
+{
+  "originHash" : "2e0cd4ca55aebb78b51c53e1fba7cc2cba792ffcc83c6e0a75490eef487e47e8",
+  "pins" : [
+    {
+      "identity" : "mobile-core-bridge-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dyte-in/mobile-core-bridge-spm.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "a2bc76ca8f128ee195f97d068e8c1d927fd5a3dd"
+      }
+    }
+  ],
+  "version" : 3
+}
