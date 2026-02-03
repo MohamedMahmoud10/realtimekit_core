@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "realtimekit_core",
-      "version": "0.1.4+1",
+      "version": "0.1.5+1",
       "dependencies": [
         "flutter",
         "pubspec_parse",
@@ -73,7 +73,7 @@
     },
     {
       "name": "realtimekit_core_platform_interface",
-      "version": "0.1.4+1",
+      "version": "0.1.5",
       "dependencies": [
         "flutter",
         "focus_detector_v2",
@@ -82,7 +82,7 @@
     },
     {
       "name": "realtimekit_core_android",
-      "version": "0.1.5",
+      "version": "0.1.5+1",
       "dependencies": [
         "flutter",
         "realtimekit_core_platform_interface"
@@ -207,14 +207,14 @@
     },
     {
       "name": "json_annotation",
-      "version": "4.9.0",
+      "version": "4.10.0",
       "dependencies": [
         "meta"
       ]
     },
     {
       "name": "checked_yaml",
-      "version": "2.0.3",
+      "version": "2.0.4",
       "dependencies": [
         "json_annotation",
         "source_span",
@@ -248,19 +248,19 @@
     },
     {
       "name": "term_glyph",
-      "version": "1.2.1",
+      "version": "1.2.2",
       "dependencies": []
     },
     {
       "name": "string_scanner",
-      "version": "1.3.0",
+      "version": "1.4.1",
       "dependencies": [
         "source_span"
       ]
     },
     {
       "name": "source_span",
-      "version": "1.10.0",
+      "version": "1.10.1",
       "dependencies": [
         "collection",
         "path",
@@ -269,7 +269,7 @@
     },
     {
       "name": "boolean_selector",
-      "version": "2.1.1",
+      "version": "2.1.2",
       "dependencies": [
         "source_span",
         "string_scanner"
@@ -277,7 +277,7 @@
     },
     {
       "name": "async",
-      "version": "2.11.0",
+      "version": "2.13.0",
       "dependencies": [
         "collection",
         "meta"
@@ -293,13 +293,6 @@
       ]
     },
     {
-      "name": "visibility_detector",
-      "version": "0.4.0+2",
-      "dependencies": [
-        "flutter"
-      ]
-    },
-    {
       "name": "leak_tracker",
       "version": "11.0.2",
       "dependencies": [
@@ -311,8 +304,15 @@
       ]
     },
     {
+      "name": "visibility_detector",
+      "version": "0.4.0+2",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
       "name": "vm_service",
-      "version": "14.3.0",
+      "version": "15.0.2",
       "dependencies": []
     }
   ],
