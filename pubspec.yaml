@@ -1,6 +1,6 @@
 name: realtimekit_core_android
 description: Android implementation of the realtimekit_core plugin
-version: 0.1.5
+version: 0.1.5+1
 homepage: https://docs.realtime.cloudflare.com/flutter-core
 
 

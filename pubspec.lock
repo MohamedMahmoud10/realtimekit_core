@@ -151,8 +151,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "feat/platform_interface"
-      resolved-ref: aee0373361f61ace4e3bff724184c5b46fb5dbfa
+      ref: "feat/V0.1.5+1"
+      resolved-ref: "6457a6b7a05ffc76774bab0286f7bd56f04f3638"
       url: "https://github.com/MohamedMahmoud10/realtimekit_core"
     source: git
     version: "0.1.4+1"

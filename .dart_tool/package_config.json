@@ -117,7 +117,7 @@
     },
     {
       "name": "realtimekit_core_platform_interface",
-      "rootUri": "file:///Users/asd/.pub-cache/git/realtimekit_core-aee0373361f61ace4e3bff724184c5b46fb5dbfa/",
+      "rootUri": "file:///Users/asd/.pub-cache/git/realtimekit_core-6457a6b7a05ffc76774bab0286f7bd56f04f3638/",
       "packageUri": "lib/",
       "languageVersion": "2.19"
     },
@@ -188,7 +188,7 @@
       "languageVersion": "2.19"
     }
   ],
-  "generated": "2025-12-22T14:19:38.998438Z",
+  "generated": "2026-02-03T19:19:33.286651Z",
   "generator": "pub",
   "generatorVersion": "3.6.0",
   "flutterRoot": "file:///Users/asd/Downloads/flutter3.27.0",
