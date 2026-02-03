@@ -15,10 +15,5 @@ import io.flutter.embedding.engine.FlutterEngine;
 public final class GeneratedPluginRegistrant {
   private static final String TAG = "GeneratedPluginRegistrant";
   public static void registerWith(@NonNull FlutterEngine flutterEngine) {
-    try {
-      flutterEngine.getPlugins().add(new com.cloudflare.realtimekit.flutter.FlutterCorePlugin());
-    } catch (Exception e) {
-      Log.e(TAG, "Error registering plugin realtimekit_core_android, com.cloudflare.realtimekit.flutter.FlutterCorePlugin", e);
-    }
   }
 }
