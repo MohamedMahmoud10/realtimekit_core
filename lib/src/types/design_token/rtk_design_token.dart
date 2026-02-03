@@ -42,8 +42,10 @@ class RtkDesignTokens {
               textOnBrand: _text,
             );
 
-  static int parseColorStringToInt(String value) =>
-      int.parse(value.replaceFirst(RegExp(r'#'), 'FF'), radix: 16);
+  static int parseColorStringToInt(String value) => int.parse(
+        value.replaceAll(RegExp(r'\s+'), '').replaceFirst(RegExp(r'#'), 'FF'),
+        radix: 16,
+      );
 
   static RtkDesignTokens fromMap(Map<String, dynamic> map) {
     final Map<String, dynamic> colorMap =
@@ -69,7 +71,6 @@ class RtkDesignTokens {
     );
 
     return RtkDesignTokens(
-      
       colorToken: RtkColorToken(
         brandColorSwatch: RtkColorSwatch(500, brandColorSwatch),
         backgroundColorSwatch: RtkColorSwatch(1000, bgColorSwatch),
