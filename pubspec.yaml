@@ -23,7 +23,7 @@ dependencies:
   realtimekit_core_platform_interface:
     git:
       url: https://github.com/MohamedMahmoud10/realtimekit_core
-      ref: feat/platform_interface
+      ref: feat/V0.1.5+1
 
 dev_dependencies:
   flutter_lints: ^4.0.0
