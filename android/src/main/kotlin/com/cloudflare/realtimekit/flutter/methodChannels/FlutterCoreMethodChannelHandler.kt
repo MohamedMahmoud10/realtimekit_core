@@ -7,6 +7,7 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import java.io.File
 import com.cloudflare.realtimekit.RtkClient
+import com.cloudflare.realtimekit.flutter.RtkClientProvider
 import com.cloudflare.realtimekit.RtkSink
 import com.cloudflare.realtimekit.RtkUtils
 import com.cloudflare.realtimekit.listeners.ChatEventListener
@@ -67,7 +68,6 @@ class RtkSinkWrapper(private val sink: EventSink, private val handler: FlutterCo
 }
 
 class FlutterCoreMethodChannelHandler(
-    private val rtkClient: RtkClient,
     private val context: Context,
     private val meetingRoomEventChannel: EventChannel,
     private val chatEventChannel: EventChannel,
@@ -82,6 +82,15 @@ class FlutterCoreMethodChannelHandler(
     private val stageEventChannel: EventChannel,
     private val participantUpdateEventChannel: EventChannel
 ) : MethodChannel.MethodCallHandler {
+
+    /**
+     * Always resolves to the *current* native client published by
+     * [RtkClientProvider]. Reading dynamically (instead of capturing the client
+     * in the constructor) is what lets a rebuilt client — created for each new
+     * meeting — be picked up here without recreating this handler. See
+     * [RtkClientProvider] for why the client must be rebuilt per meeting.
+     */
+    private val rtkClient: RtkClient get() = RtkClientProvider.requireRtkClient()
 
     private var participantEventListener: ParticipantEventListener? = null
     private var meetingRoomEventListener: RoomEventListener? = null
