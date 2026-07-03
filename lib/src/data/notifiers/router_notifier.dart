@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:realtimekit_core/realtimekit_core.dart';
 import 'package:realtimekit_ui/realtimekit_ui.dart';
 import 'package:realtimekit_ui/src/data/states/router_states.dart';
@@ -13,31 +14,37 @@ class RouterNotifier extends Notifier<RouterStates>
 
   @override
   void onMeetingInitStarted() {
+    debugPrint('[RtkRouter] onMeetingInitStarted');
     state = OnRouterMeetingInitStarted();
   }
 
   @override
   void onMeetingInitCompleted() {
+    debugPrint('[RtkRouter] onMeetingInitCompleted');
     state = OnRouterMeetingInitCompleted();
   }
 
   @override
   void onMeetingInitFailed(MeetingError error) {
+    debugPrint('[RtkRouter] onMeetingInitFailed: $error');
     state = OnRouterMeetingInitFailed(error);
   }
 
   @override
   void onMeetingRoomJoinStarted() {
+    debugPrint('[RtkRouter] onMeetingRoomJoinStarted');
     state = OnRouterMeetingRoomJoinStarted();
   }
 
   @override
   void onMeetingRoomJoinCompleted() {
+    debugPrint('[RtkRouter] onMeetingRoomJoinCompleted');
     state = OnRouterMeetingRoomJoinCompleted();
   }
 
   @override
   void onMeetingRoomJoinFailed(MeetingError error) {
+    debugPrint('[RtkRouter] onMeetingRoomJoinFailed: $error');
     state = OnRouterMeetingRoomJoinFailed(error);
   }
 
@@ -53,11 +60,13 @@ class RouterNotifier extends Notifier<RouterStates>
 
   @override
   void onWaitListStatusUpdate(WaitlistStatus waitListStatus) {
+    debugPrint('[RtkRouter] onWaitListStatusUpdate: $waitListStatus');
     state = OnRouterSelfWaitingRoomStatusUpdate(waitListStatus);
   }
 
   @override
   void onRemovedFromMeeting() {
+    debugPrint('[RtkRouter] onRemovedFromMeeting');
     state = OnRouterRemovedFromMeeting();
   }
 
@@ -90,6 +99,7 @@ class RouterNotifier extends Notifier<RouterStates>
 
   @override
   void onMeetingEnded() {
+    debugPrint('[RtkRouter] onMeetingEnded');
     state = OnRouterMeetingEnded();
   }
 
@@ -101,6 +111,9 @@ class RouterNotifier extends Notifier<RouterStates>
 
   @override
   void onSocketConnectionUpdate(SocketConnectionState socketState) {
+    debugPrint(
+        '[RtkRouter] onSocketConnectionUpdate: ${socketState.socketState} '
+        'reconnected=${socketState.reconnected} attempt=${socketState.reconnectionAttempt}');
     this.socketState = socketState;
     switch (socketState.socketState) {
       case SocketState.connected:

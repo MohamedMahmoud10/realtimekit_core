@@ -31,6 +31,7 @@ class _RoomRoutePageState extends ConsumerState<RoomRoutePage> {
   @override
   Widget build(BuildContext context) {
     ref.listen(routerNotifier, (previous, next) async {
+      debugPrint('[RtkRoom] router event -> ${next.runtimeType}');
       switch (next.runtimeType) {
         case OnRouterMeetingInitStarted:
           Navigator.push(
@@ -270,6 +271,7 @@ class _RoomRoutePageState extends ConsumerState<RoomRoutePage> {
   void initState() {
     super.initState();
     if (mounted) {
+      debugPrint('[RtkRoom] initState -> rtkMeeting.init()');
       rtkMeeting.init(meetingInfo);
     }
   }
