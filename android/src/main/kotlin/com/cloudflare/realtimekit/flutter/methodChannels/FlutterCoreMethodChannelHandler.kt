@@ -541,11 +541,16 @@ override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
             "init" -> {
                 val meetingInfo = RtkMeetingInfo.fromMap(call.arguments as Map<String, Any?>)
                 rtkClient.init(meetingInfo, onSuccess = {
+                    android.util.Log.d("RtkFlutter", "init: onSuccess")
                     result.success(null)
-                }) {
-                    error -> {
-                    result.error(error!!.code.toString(),error.message, null)
-                }}
+                }) { error ->
+                    // Previously the error was swallowed (the body was an
+                    // uninvoked lambda), so a failed init never completed the
+                    // Dart Future and the UI hung on the loading spinner. Now we
+                    // log and propagate the real error.
+                    android.util.Log.e("RtkFlutter", "init: onError code=${error?.code} msg=${error?.message}")
+                    result.error(error?.code?.toString() ?: "init_error", error?.message, null)
+                }
                 return
             }
             "meta" -> {
@@ -564,11 +569,12 @@ override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
             
             "joinRoom" -> {
                 rtkClient.joinRoom(onSuccess = {
+                    android.util.Log.d("RtkFlutter", "joinRoom: onSuccess")
                     result.success(null)
-                }){
-                    error -> {
-                        result.error(error!!.code.toString(),error.message, null)
-                }
+                }){ error ->
+                    // Error was swallowed before (uninvoked lambda) -> hang.
+                    android.util.Log.e("RtkFlutter", "joinRoom: onError code=${error?.code} msg=${error?.message}")
+                    result.error(error?.code?.toString() ?: "join_error", error?.message, null)
                 }
                 return
             }
@@ -621,10 +627,9 @@ override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
             "leaveRoom" -> {
                 rtkClient.leaveRoom(onSuccess = {
                     result.success(null)
-                }){
-                    error -> {
-                        result.error(error!!.code.toString(),error.message, null)
-                }
+                }){ error ->
+                    android.util.Log.e("RtkFlutter", "leaveRoom: onError code=${error?.code} msg=${error?.message}")
+                    result.error(error?.code?.toString() ?: "leave_error", error?.message, null)
                 }
                 return
             }
@@ -845,50 +850,42 @@ override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
             }
 
             "enableVideo" -> {
-                return rtkClient.enableVideo {
-                    value -> {
-                        if (value == null) {
-                            result.success(null)
-                        } else {
-                            result.error(value.code.toString(), value.message, null)
-                        }
-                }
+                return rtkClient.enableVideo { value ->
+                    if (value == null) {
+                        result.success(null)
+                    } else {
+                        result.error(value.code.toString(), value.message, null)
+                    }
                 }
             }
 
             "disableVideo" -> {
-                return rtkClient.disableVideo{
-                    value -> {
-                        if (value == null) {
-                            result.success(null)
-                        } else {
-                            result.error(value.code.toString(), value.message, null)
-                        }
+                return rtkClient.disableVideo { value ->
+                    if (value == null) {
+                        result.success(null)
+                    } else {
+                        result.error(value.code.toString(), value.message, null)
                     }
                 }
             }
 
             "enableAudio" -> {
-                return rtkClient.enableAudio{
-                    value -> {
-                        if (value == null) {
-                            result.success(null)
-                        } else {
-                            result.error(value.code.toString(), value.message, null)
-                        }
-                }
+                return rtkClient.enableAudio { value ->
+                    if (value == null) {
+                        result.success(null)
+                    } else {
+                        result.error(value.code.toString(), value.message, null)
+                    }
                 }
             }
 
             "disableAudio" -> {
-                return rtkClient.disableAudio {
-                    value -> {
-                        if (value == null) {
-                            result.success(null)
-                        } else {
-                            result.error(value.code.toString(), value.message, null)
-                        }
-                }
+                return rtkClient.disableAudio { value ->
+                    if (value == null) {
+                        result.success(null)
+                    } else {
+                        result.error(value.code.toString(), value.message, null)
+                    }
                 }
             }
 
