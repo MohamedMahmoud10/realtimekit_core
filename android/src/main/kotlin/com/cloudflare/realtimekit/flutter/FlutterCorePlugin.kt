@@ -90,6 +90,27 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
     }
 
     /**
+     * Guarantees a live native client is published before the handler needs it.
+     *
+     * In a complex host app the activity is repeatedly detached/reattached
+     * (permission dialogs, image/file pickers, QR scanner, Google sign-in, …),
+     * which can leave [RtkClientProvider] cleared by the time a meeting starts —
+     * the handler then throws "RtkClient has not been initialized yet" on init.
+     * Since the meeting UI is on screen the activity is available, so build and
+     * publish a fresh client. Called at the top of every intercepted call so the
+     * client exists *before* the listener-attach calls that precede init(),
+     * otherwise those listeners would bind to nothing and the meeting would hang.
+     * No-op when a client is already published (the normal path).
+     */
+    private fun ensureLiveClient() {
+        if (RtkClientProvider.rtkClient != null) return
+        val currentActivity = activity ?: return
+        realtimeClient = RealtimeKitMeetingBuilder.build(currentActivity)
+        rtkClientAndroid = RtkClient(realtimeClient)
+        publishClient()
+    }
+
+    /**
      * Wraps the real method-call handler. Tracks when the client becomes "used"
      * (on `init`) and, on `release`, rebuilds a fresh native client once the SDK
      * finishes releasing the old one — so join -> leave -> join again works
@@ -98,6 +119,8 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
      */
     private val methodCallInterceptor = object : MethodChannel.MethodCallHandler {
         override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+            // Heal a missing client before the handler touches it (see above).
+            ensureLiveClient()
             when (call.method) {
                 "init" -> {
                     meetingClientUsed = true
