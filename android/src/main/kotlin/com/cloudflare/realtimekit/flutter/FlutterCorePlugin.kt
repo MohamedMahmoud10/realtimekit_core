@@ -61,6 +61,7 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
     private fun publishClient() {
         RtkClientProvider.rtkClient = rtkClientAndroid
         RtkClientProvider.realtimeClient = realtimeClient
+        Log.d("RtkFlutter", "publishClient: published (non-null=${rtkClientAndroid != null})")
     }
 
     /**
@@ -104,7 +105,12 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
      */
     private fun ensureLiveClient() {
         if (RtkClientProvider.rtkClient != null) return
-        val currentActivity = activity ?: return
+        val currentActivity = activity
+        if (currentActivity == null) {
+            Log.w("RtkFlutter", "ensureLiveClient: client null AND activity null — cannot build")
+            return
+        }
+        Log.d("RtkFlutter", "ensureLiveClient: client was null, building a fresh one")
         realtimeClient = RealtimeKitMeetingBuilder.build(currentActivity)
         rtkClientAndroid = RtkClient(realtimeClient)
         publishClient()
@@ -119,6 +125,11 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
      */
     private val methodCallInterceptor = object : MethodChannel.MethodCallHandler {
         override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+            Log.d(
+                "RtkFlutter",
+                "onMethodCall: ${call.method} | client=${RtkClientProvider.rtkClient != null} " +
+                    "activity=${activity != null} handler=${flutterCoreMethodChannelHandler != null}"
+            )
             // Heal a missing client before the handler touches it (see above).
             ensureLiveClient()
             when (call.method) {
@@ -291,19 +302,24 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
     }
 
     override fun onDetachedFromActivity() {
+        Log.d("RtkFlutter", "onDetachedFromActivity")
         setWakelock(false)
         activity = null
         if (rtkClientAndroid != null && rtkClientAndroid!!.isRoomJoined) {
             rtkClientAndroid?.leaveRoom(onSuccess = {}){}
-            rtkClientAndroid = null
         }
         meetingClientUsed = false
-        RtkClientProvider.rtkClient = null
-        RtkClientProvider.realtimeClient = null
+        // Intentionally do NOT clear RtkClientProvider here. Keeping the last
+        // client (even if stale) means the meeting listeners' EventChannel
+        // onListen — which reads the client and does NOT pass through the
+        // method-call interceptor's self-heal — never hits a null and never
+        // silently fails, which was leaving the meeting stuck on loading. A
+        // fresh client is republished on the next attach/reattach.
         channel.setMethodCallHandler(null)
     }
 
     override fun onPreEngineRestart() {
+        Log.d("RtkFlutter", "onPreEngineRestart (activity=${activity != null})")
         // Hot restart / engine restart: the Dart isolate restarts and runs a new
         // meeting from scratch, but onAttachedToActivity is NOT called again. Leave
         // any active room and rebuild a fresh native client (the activity is still
@@ -322,10 +338,9 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
             publishClient()
             meetingClientUsed = false
         } else {
-            rtkClientAndroid = null
+            // Keep the last published client (do not null the holder) so the next
+            // meeting's EventChannel onListen never reads a null client.
             meetingClientUsed = false
-            RtkClientProvider.rtkClient = null
-            RtkClientProvider.realtimeClient = null
         }
     }
 

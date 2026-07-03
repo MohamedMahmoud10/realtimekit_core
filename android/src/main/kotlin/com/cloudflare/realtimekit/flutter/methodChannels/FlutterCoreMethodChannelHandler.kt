@@ -49,6 +49,7 @@ class RtkEvents {
 
 class RtkSinkWrapper(private val sink: EventSink, private val handler: FlutterCoreMethodChannelHandler) : RtkSink {
     override fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
+        android.util.Log.w("RtkFlutter", "native event ERROR: code=$errorCode msg=$errorMessage")
         sink.error(errorCode, errorMessage, errorDetails)
     }
 
@@ -58,6 +59,7 @@ class RtkSinkWrapper(private val sink: EventSink, private val handler: FlutterCo
 
     override fun success(result: Any?) {
         val eventName: String = ((result as HashMap<*, *>)["name"]) as String
+        android.util.Log.d("RtkFlutter", "native event: $eventName")
         if(RtkEvents.exitingEvents.contains(eventName)){
             disposeListeners()
             sink.success(result)
