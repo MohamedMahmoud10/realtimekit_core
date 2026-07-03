@@ -52,6 +52,12 @@ class _MeetingJoinAndCreatePageState
                   designToken: RtkDesignTokens(
                     colorToken: ref.read(rtkThemeProvider).colorToken,
                   ),
+                  // Demo of the new API: any widget (here the app logo) is
+                  // rendered at the leading edge of the in-meeting app bar.
+                  customAppBarWidget: Image.asset(
+                    'assets/logo.png',
+                    height: 28,
+                  ),
                 );
                 return RtkMeetingPage(uiKitInfo);
               },

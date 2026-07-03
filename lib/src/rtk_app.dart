@@ -12,16 +12,27 @@ class RealtimeKitUIInfo {
   final RtkMeetingInfo meetingInfo;
   final RtkDesignTokens _designToken;
 
+  /// Optional widget rendered at the leading (left) edge of the in-meeting
+  /// app bar for every meeting type (group call, webinar, livestream) — most
+  /// commonly a brand logo. The meeting title, participant count, timer and
+  /// action buttons are preserved. When null the app bar is unchanged.
+  final Widget? customAppBarWidget;
+
   RtkDesignTokens get designToken => _designToken;
 
   RealtimeKitUIInfo(
     this.meetingInfo, {
     RtkDesignTokens? designToken,
+    this.customAppBarWidget,
   }) : _designToken = designToken ?? RtkDesignTokens();
 }
 
 class RtkConfig {
   bool skipSetupScreen = false;
+
+  /// Consumer-supplied widget shown at the leading edge of the in-meeting app
+  /// bar (see [RealtimeKitUIInfo.customAppBarWidget]). Null means no change.
+  Widget? customAppBarWidget;
 }
 
 class RealtimeKitUIBuilder {
@@ -66,6 +77,7 @@ class RealtimeKitUI extends StatelessWidget {
 
   Widget _app() {
     rtkConfig.skipSetupScreen = skipSetupPage;
+    rtkConfig.customAppBarWidget = uikitInfo.customAppBarWidget;
     return RtkApp(uikitInfo.meetingInfo);
   }
 

@@ -63,20 +63,33 @@ class RtkAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   Widget _buildAppBarTitle(BuildContext context) {
+    final titleBlock = Column(
+      children: [
+        Row(
+          children: [
+            RtkMeetingTitle(meeting: rtkMeeting),
+          ],
+        ),
+        _buildAppBarBottom(context),
+      ],
+    );
+    // Optional consumer-supplied widget (e.g. brand logo) shown to the left of
+    // the meeting title. When absent, the title is rendered exactly as before.
+    final customAppBar = rtkConfig.customAppBarWidget;
     return Padding(
       padding: EdgeInsets.symmetric(
         horizontal: hspace1.width!,
       ),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              RtkMeetingTitle(meeting: rtkMeeting),
-            ],
-          ),
-          _buildAppBarBottom(context),
-        ],
-      ),
+      child: customAppBar == null
+          ? titleBlock
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                customAppBar,
+                hspace2,
+                Flexible(child: titleBlock),
+              ],
+            ),
     );
   }
 
