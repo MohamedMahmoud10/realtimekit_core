@@ -8,13 +8,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  # Patched core: transitively pulls the android plugin that rebuilds the
-  # native meeting client on release, fixing the join -> leave -> rejoin
-  # infinite-loading bug. See branch fix/rejoin-stuck-loading-core.
+  # Patched core: transitively pulls the android plugin carrying the
+  # rejoin/first-join stuck-loading fixes, including the EventChannel
+  # onCancel null-client crash fix. See branch rejoin-stuck-loading-oncancel-core.
   realtimekit_core:
     git:
       url: https://github.com/MohamedMahmoud10/realtimekit_core.git
-      ref: fix/rejoin-stuck-loading-core
+      ref: rejoin-stuck-loading-oncancel-core
   get_it: ^9.0.5
   flutter_riverpod: ^2.1.3
   file_picker: ^10.3.8
