@@ -228,10 +228,15 @@ class FlutterCoreAndroid extends RtkClientPlatform {
     if (nativeController != null) {
       onNativeListenerAttached.call(nativeController);
     }
-    for (final listener in cachedListeners) {
+    // Iterate over a snapshot and clear first: onNativeListenerAttached may
+    // append back into cachedListeners (when the native listener isn't attached
+    // yet), which would otherwise throw a "Concurrent modification during
+    // iteration" error. Anything re-added stays queued for the next attach.
+    final pending = List<T>.from(cachedListeners);
+    cachedListeners.clear();
+    for (final listener in pending) {
       onNativeListenerAttached(listener);
     }
-    cachedListeners.clear();
   }
 
   @override

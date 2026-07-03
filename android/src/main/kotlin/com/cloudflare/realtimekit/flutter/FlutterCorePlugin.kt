@@ -281,14 +281,29 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
     }
 
     override fun onPreEngineRestart() {
+        // Hot restart / engine restart: the Dart isolate restarts and runs a new
+        // meeting from scratch, but onAttachedToActivity is NOT called again. Leave
+        // any active room and rebuild a fresh native client (the activity is still
+        // attached) while KEEPING the method-call handler + channel interceptor
+        // wired, so the restarted Dart side has a live client to talk to. Nulling
+        // the handler/holder instead (as before) makes the next init() hit a null
+        // handler, which surfaces as a concurrent-modification crash and a stuck
+        // loading screen.
         if (rtkClientAndroid != null && rtkClientAndroid!!.isRoomJoined) {
             rtkClientAndroid?.leaveRoom(onSuccess = {}){}
         }
-        rtkClientAndroid = null
-        flutterCoreMethodChannelHandler = null
-        meetingClientUsed = false
-        RtkClientProvider.rtkClient = null
-        RtkClientProvider.realtimeClient = null
+        val currentActivity = activity
+        if (currentActivity != null) {
+            realtimeClient = RealtimeKitMeetingBuilder.build(currentActivity)
+            rtkClientAndroid = RtkClient(realtimeClient)
+            publishClient()
+            meetingClientUsed = false
+        } else {
+            rtkClientAndroid = null
+            meetingClientUsed = false
+            RtkClientProvider.rtkClient = null
+            RtkClientProvider.realtimeClient = null
+        }
     }
 
     override fun onEngineWillDestroy() {
