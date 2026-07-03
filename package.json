@@ -1,0 +1,14 @@
+{
+  "name": "@cloudflare/realtimekit-ui",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Cloudflare RealtimeKit UI SDK",
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.cfdata.org/cloudflare/rt/mobile/flutter-ui"
+  },
+  "scripts": {},
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1"
+  }
+}

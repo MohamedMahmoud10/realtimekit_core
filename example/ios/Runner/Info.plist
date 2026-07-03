@@ -2,10 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Example</string>
+	<string>Rtk Flutter Sample App</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -13,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>example</string>
+	<string>Rtk Flutter Sample App</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -22,12 +24,44 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>We will use your Bluetooth to access your Bluetooth headphones.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>We will use your Bluetooth to access your Bluetooth headphones.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need camera access to include camera in your screen recording</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This app does not actively use your location. Location access may be requested by third-party libraries for functionality purposes.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need microphone access to include audio in your screen recording</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>For people to share, we need access to your photos.</string>
+	<key>RPScreenRecordingUsageDescription</key>
+	<string>We need screen recording permission to share your screen with other participants</string>
+	<key>RPSystemBroadcastPickerViewService</key>
+	<array>
+		<string>com.apple.broadcastscreenshare</string>
+	</array>
+	<key>RTKRTCAppGroupIdentifier</key>
+	<string>group.cloudflare.realtimekit</string>
+	<key>RTKRTCScreenSharingExtension</key>
+	<string>com.cloudflare.rtk.flutter.ScreenBroadcast</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>UIStatusBarHidden</key>
+	<true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -41,9 +75,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 </dict>
 </plist>

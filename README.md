@@ -1,223 +1,155 @@
-# realtimekit_core
-
-<!-- PROJECT LOGO -->
 <p align="center">
-  <a href="https://realtime.cloudflare.com/">
-    <img src="https://docs.realtime.cloudflare.com/logo/cf.svg" alt="Logo" width="80">
+  <a href="https://www.cloudflare.com/">
+    <img src="https://cf-assets.www.cloudflare.com/slt3lc6tev37/6EYsdkdfBcHtgPmgp3YtkD/0b203affd2053988264b9253b13de6b3/logo-thumbnail.png" alt="Cloudflare" width="200" />
   </a>
-  <h3 align="center">RealtimeKit Core for Flutter Mobile</h3>
-
-  <p align="center">
-    A SDK that provides Cloudflare Realtime's audio, video conferencing and livestreaming functionality.
-    <br />
-    <a href="https://docs.realtime.cloudflare.com/flutter-core"><strong>Explore the docs »</strong></a>
-    <br />
-  </p>
+  <h2 align="center">RealtimeKit UI Kit for Flutter</h2>
 </p>
 
-## Before Getting Started
+An easy-to-integrate Flutter package for all your audio-video call needs, powered by Cloudflare's RealtimeKit infrastructure.
 
-- Make sure you've read the
-  [Getting Started with RealtimeKit](https://docs.realtime.cloudflare.com/getting-started) topic and
-  completed the steps in the
-  [Integrate RealtimeKit](https://docs.realtime.cloudflare.com/getting-started#integrate-realtimekit) section.
-  You must complete the following steps:
-  - Create a [RealtimeKit Developer Account](https://dash.realtime.cloudflare.com)
-  - Create [Presets](https://dash.realtime.cloudflare.com/presets)
-  - Create a
-    [RealtimeKit Meeting](https://docs.realtime.cloudflare.com/api#/operations/create_meeting)
-  - [Add a Participant](https://docs.realtime.cloudflare.com/api#/operations/add_participant)
-    to the meeting
+A following example showcases some of the screens you get with this package:
 
-## Installation
+<table>
+    <tbody>
+        <tr>
+            <td align="center" style="background-color: white">
+                <img src="https://cdn.dyte.in/flutter_uikit/flutter-setup-page.png" width="225"/>
+            </td>
+            <td align="center" style="background-color: white">
+                <img src="https://cdn.dyte.in/flutter_uikit/flutter-video-call.png" width="225"/>
+            </td>
+            <td align="center" style="background-color: white">
+                <img src="https://cdn.dyte.in/flutter_uikit/flutter-advanced-features.png" width="225"/>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="background-color: white">
+                <img src="https://cdn.dyte.in/flutter_uikit/flutter-chat.png" width="225"/>
+            </td>
+            <td align="center" style="background-color: white">
+                <img src="https://cdn.dyte.in/flutter_uikit/flutter-participant-list.png" width="225"/>
+            </td>
+        </tr>
+    </tbody>
+</table>
 
-```sh
-flutter pub add realtimekit_core
-```
+## Before getting started:
+Make sure you've read the [Getting Started with RealtimeKit](https://docs.realtime.cloudflare.com/getting-started) guide and completed the steps in the [Integrate RealtimeKit](https://docs.realtime.cloudflare.com/getting-started#integrate-realtimekit) section which includes:
+- Creating a [RealtimeKit Developer Account](https://dash.realtime.cloudflare.com)
 
-### For iOS
+- Creating [Presets](https://dash.realtime.cloudflare.com/presets)
 
-1. Set your platform to iOS 12.0 or above in your Podfile.
+> **_Presets:_**  Set of permissions and UI configurations that are applied to participants.
 
-```dart
-platform :ios, '12.0'
-```
+- Creating a [RealtimeKit Meeting](https://docs.realtime.cloudflare.com/api#/operations/create_meeting)
 
-2. Add the following entries to the `info.plist` file. This gives permission to
-   your app to access the camera and microphone, access photos, install the
-   required fonts and icons.
+- [Adding a Participant](https://docs.realtime.cloudflare.com/api#/operations/add_participant) to the meeting
 
-```dart
-<key>NSBluetoothPeripheralUsageDescription</key>
-<string>We will use your Bluetooth to access your Bluetooth headphones.</string>
-<key>NSBluetoothAlwaysUsageDescription</key>
-<string>We will use your Bluetooth to access your Bluetooth headphones.</string>
-<key>NSCameraUsageDescription</key>
-<string>For people to see you during meetings, we need access to your camera.</string>
-<key>NSMicrophoneUsageDescription</key>
-<string>For people to hear you during meetings, we need access to your microphone.</string>
-<key>NSPhotoLibraryUsageDescription</key>
-<string>For people to share, we need access to your photos.</string>
-```
+After adding a participant to your meeting, you'll receive an `authToken`. That's all you require to prepare a complete RealtimeKit video-audio meeting.
 
-<!-- USAGE EXAMPLES -->
 ## Usage
 
-### Import the following package into your project:
+### Step 1: Install the SDK
 
-```dart
-import 'package:realtimekit_core/realtimekit_core.dart';
+- Add `realtimekit_ui` as a dependency in your `pubspec.yaml`, or run `flutter pub add realtimekit_ui`.
+
+```bash
+flutter pub add realtimekit_ui
 ```
 
-### Initialize the SDK
+### Step 2: Android & iOS Permissions
 
-The `RealtimeKitClient` is the main class of the SDK. It is the entry point and
-the only class required to initialize RealtimeKit SDK.
+- #### Android
 
-```dart
-final meeting = RealtimeKitClient();
-```
+    Set `compileSdkVersion 36` & `minSdkVersion 24` inside app-level `build.gradle`.
 
-### Set the meeting properties
+    ```groovy
 
-Set the properties in the `RtkMeetingInfo` class. You just need to provide the
-participant's `authToken`.
+    defaultConfig {
+        ...
 
-| Name        | Description                                                                                                                                                                                                                                                                                                                                   |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `authToken` | After you've created the meeting, <br/> add each participant to the meeting <br/> using the [Add Participant API](https://docs.realtime.cloudflare.com/api#/operations/add_participan)<br/> (The presetName created earlier <br/> must be passed in the body <br/> of the Add Participant API request) <br/> The API response contains the `authToken`. |
+        compileSdkVersion 36
+        minSdkVersion 24
 
-```dart
-final meetingInfo = RtkMeetingInfo(
-                    authToken: '<auth_token>',
-                  );
-```
+        ...
+    }
+    ```
 
-### Initialize the connection request
+- #### iOS
 
-To initialize the connection request, call the `init()` method on
-`RealtimeKitClient` object with the `meetingInfo` argument. This will establish the connection
-with the RealtimeKit meeting server.
+    1. Set minimum deployment target for your Flutter app to 13.0 or higher in your Podfile.
 
-```dart
-meeting.init(meetingInfo);
-```
+    ```Swift
+    platform :ios, '13.0'
+    ```
 
-By registering state observers, you receive callbacks for this action on the
-meeting object.
+    2. Add the following keys to your `Info.plist` file to get Camera & Microphone permission.
 
-```dart
+    ```xml
+    <!-- Add the permission to use camera & microphone. -->
 
-class RoomStateNotifier extends RtkMeetingRoomEventListener {
+    <key>NSCameraUsageDescription</key>
+    <string>For people to see you during meetings, we need access to your camera.</string>
+    
+    <key>NSMicrophoneUsageDescription</key>
+    <string>For people to hear you during meetings, we need access to your microphone.</string>
+    ```
 
-  ...
+### Step 3: Initialize the SDK
 
-  @override
-  void onMeetingInitStarted() {
-    /// on meeting init started
-  }
-
-  override
-  void onMeetingInitCompleted() {
-    /// on meeting init completed
-  }
-
-  @override
-  void onMeetingInitFailed(Exception exception) {
-    /// on meeting init failed
-  }
-
-  ...
-}
-
-```
-
-### Connect to the meeting
-
-Now, you have established the connection with the RealtimeKit meeting server
-successfully. Next step is to join the room.
-
-#### Join the room
-
-To join the meeting room, call `joinRoom()` method on the `RealtimeKitClient` instance
-as shown below.
+Create the `RtkMeetingInfo` object using the `authToken` you fetched from [Before Getting Started](#before-getting-started) section as follows:
 
 ```dart
-meeting.joinRoom();
+    final meetingInfo = RtkMeetingInfo(authToken: '<auth_token>');
 ```
 
-By registering state observers, you receive callbacks for this action on the
-meeting object.
+Initialize the RealtimeKitUI with the `RealtimeKitUIBuilder` class, using the meetingInfo configured above.
 
 ```dart
-class LocalUserStatesNotifier extends RtkSelfEventListener {
 
-  @override
-  void onMeetingRoomJoinStarted() {
-    /// Handle join start state
-  }
+/* Passing the RtkMeetingInfo object `meetingInfo` you created in the Step 3 */
 
-  @override
-  void onMeetingRoomJoined () {
-    /// Handle joining completion, ex: move to room screen
-  }
+final realtimeKitUIInfo = RealtimeKitUIInfo(
+      meetingInfo,
+      // Optional: Pass the RtkDesignTokens object to customize the UI
+      designToken: RtkDesignTokens(
+        colorToken: RtkColorToken(
+          brandColor: Colors.purple,
+          backgroundColor: Colors.black,
+          textOnBackground: Colors.white,
+          textOnBrand: Colors.white,
+        ),
+      ),
+    );
 
-  @override
-  void onMeetingRoomJoinFailed(exception){
-    /// Handle failure
-  }
+final realtimeKitUI = RealtimeKitUIBuilder.build(uiKitInfo: uikitInfo);
 
-}
 ```
 
-#### Leave the room
+### Step 4: Launch the meeting UI
 
-Once the meeting is over, you can leave the meeting room.
-
-To leave the meeting room, call `leaveRoom()` method on the `RealtimeKitClient` as
-shown below.
+To launch the meeting UI all you need to do is call the `loadUI()` method of the `RealtimeKitUI` object which will return a `Widget`. You can push this widget as a page to start the flow of prebuilt Flutter UI Kit.
 
 ```dart
-meeting.leaveRoom();
+    import 'package:realtimekit_ui/realtimekit_ui.dart';
+    import 'package:flutter/material.dart';
+
+    class RtkMeetingPage extends StatelessWidget {
+      const RtkMeetingPage({super.key});
+    
+      @override
+      Widget build(BuildContext context) {
+        ...
+        // Push this widget as page in your app
+        return realtimeKitUI.loadUI();
+      }
+    }
 ```
 
-### Cleanup listeners
+### Conclusion
 
-Call the `cleanAllNativeListeners()` method when you're done with current session of RealtimeKit meeting. It interally calls individual new clean methods for each listener `cleanNativeMeetingRoomEventsListener()`, `cleanNativeParticipantEventListener()`, `cleanNativePollListener()`, `cleanNativeRecordingListener()`, `cleanNativeStageEventsListener()`, `cleanNativeSelfParticipantEventListener()`, `cleanNativeChatListener()`, `cleanNativeDataUpdateListener()`, `cleanNativeLivestreamListener()`, `cleanNativePluginEventsListener()`.
+To know more about the customization you can do with `realtimekit_ui`, head over to our [Flutter docs](https://docs.realtime.cloudflare.com/flutter).
 
-By registering state observers, you receive callbacks for this action on the
-meeting object.
+### Sample app
 
-```dart
-class RoomStateNotifier extends RtkMeetingRoomEventListener {
-
-  ...
-
-  @override
-  void onMeetingRoomLeaveStarted() {
-    /// on meeting room leave started
-  }
-
-  @override
-  void onMeetingRoomLeaveCompleted() {
-    meeting.removeMeetingRoomEventListener(this);
-    meeting.cleanupAppListeners();
-
-    /// on meeting room left
-  }
-
-  ...
-
-}
-```
-
-_For more examples, please refer to the [Documentation](https://docs.realtime.cloudflare.com/flutter-core)._
-
-## About
-
-`realtimekit_core` is created & maintained by Cloudflare, Inc. You can find us on X - [@Cloudflare](https://x.com/cloudflare) or chat with us from your [Developer accout](https://dash.realtime.cloudflare.com).
-
-The names and logos for Cloudflare are trademarks of Cloudflare, Inc.
-
-We love open source software! See [our other projects](https://github.com/dyte-in) and [our products](https://www.cloudflare.com/).
-
+Check the [example app](example/) included in this repository for a complete implementation of `realtimekit_ui` in a Flutter application.

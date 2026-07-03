@@ -1,30 +1,45 @@
-name: realtimekit_core
-description: Realtimekit Core SDK
-version: 0.1.2+1
-homepage: https://docs.realtime.cloudflare.com/flutter-core
-
+name: realtimekit_ui
+description: Cloudflare's RealtimeKit UI SDK to integrate video-audio to your app
+version: 0.4.0
+homepage: https://docs.realtime.cloudflare.com/
 environment:
   sdk: ">=2.19.0 <4.0.0"
-  flutter: ">=3.0.0"
-
-flutter:
-  plugin:
-    platforms:
-      android:
-        default_package: realtimekit_core_android
-  assets:
-    - pubspec.yaml
-
+  flutter: ">=1.17.0"
 dependencies:
   flutter:
     sdk: flutter
-  realtimekit_core_android: ^0.1.2+1
-  realtimekit_core_platform_interface: ^0.1.2+1
-  pubspec_parse: ^1.3.0
-
+  # Patched core: transitively pulls the android plugin that rebuilds the
+  # native meeting client on release, fixing the join -> leave -> rejoin
+  # infinite-loading bug. See branch fix/rejoin-stuck-loading-core.
+  realtimekit_core:
+    git:
+      url: https://github.com/MohamedMahmoud10/realtimekit_core.git
+      ref: fix/rejoin-stuck-loading-core
+  get_it: ^9.0.5
+  flutter_riverpod: ^2.1.3
+  file_picker: ^10.3.8
+  dyte_icons: ^0.0.3
+  flutter_localizations:
+    sdk: flutter
 dev_dependencies:
-  flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
-  mocktail: ^1.0.4
-  plugin_platform_interface: ^2.0.0
+  flutter_lints: ^2.0.0
+  melos: ^7.0.0
+
+melos:
+  useRootAsPackage: true
+
+flutter:
+  assets:
+    - pubspec.yaml
+    - assets/images/
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700

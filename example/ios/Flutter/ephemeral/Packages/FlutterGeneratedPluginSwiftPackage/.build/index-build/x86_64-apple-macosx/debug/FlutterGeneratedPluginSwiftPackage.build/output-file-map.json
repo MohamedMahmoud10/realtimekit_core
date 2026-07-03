@@ -1,0 +1,12 @@
+{
+  "": {
+    "swift-dependencies": "/Users/asd/Desktop/realtime_kit/realtimekit_ui-0.4.0/example/ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/.build/index-build/x86_64-apple-macosx/debug/FlutterGeneratedPluginSwiftPackage.build/master.swiftdeps"
+  },
+  "/Users/asd/Desktop/realtime_kit/realtimekit_ui-0.4.0/example/ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/Sources/FlutterGeneratedPluginSwiftPackage/FlutterGeneratedPluginSwiftPackage.swift": {
+    "dependencies": "/Users/asd/Desktop/realtime_kit/realtimekit_ui-0.4.0/example/ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/.build/index-build/x86_64-apple-macosx/debug/FlutterGeneratedPluginSwiftPackage.build/FlutterGeneratedPluginSwiftPackage.d",
+    "object": "/Users/asd/Desktop/realtime_kit/realtimekit_ui-0.4.0/example/ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/.build/index-build/x86_64-apple-macosx/debug/FlutterGeneratedPluginSwiftPackage.build/FlutterGeneratedPluginSwiftPackage.swift.o",
+    "swiftmodule": "/Users/asd/Desktop/realtime_kit/realtimekit_ui-0.4.0/example/ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/.build/index-build/x86_64-apple-macosx/debug/FlutterGeneratedPluginSwiftPackage.build/FlutterGeneratedPluginSwiftPackage~partial.swiftmodule",
+    "swift-dependencies": "/Users/asd/Desktop/realtime_kit/realtimekit_ui-0.4.0/example/ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/.build/index-build/x86_64-apple-macosx/debug/FlutterGeneratedPluginSwiftPackage.build/FlutterGeneratedPluginSwiftPackage.swiftdeps",
+    "diagnostics": "/Users/asd/Desktop/realtime_kit/realtimekit_ui-0.4.0/example/ios/Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage/.build/index-build/x86_64-apple-macosx/debug/FlutterGeneratedPluginSwiftPackage.build/FlutterGeneratedPluginSwiftPackage.dia"
+  }
+}

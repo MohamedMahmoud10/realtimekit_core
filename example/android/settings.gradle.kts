@@ -16,10 +16,31 @@ pluginManagement {
     }
 }
 
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+
+        // Use composite builds for local development
+        if (providers.gradleProperty("localBuild").isPresent) {
+            includeBuild("../../../mobile-core") {
+                dependencySubstitution {
+                    substitute(module("com.cloudflare.realtimekit:core")).using(project(":core"))
+                }
+            }
+            includeBuild("../../../mobile-core-bridge") {
+                dependencySubstitution {
+                    substitute(module("com.cloudflare.realtimekit:mobile-core-bridge")).using(project(":shared"))
+                }
+            }
+        }
+    }
+}
+
 plugins {
     id("dev.flutter.flutter-plugin-loader") version "1.0.0"
-    id("com.android.application") version "8.7.0" apply false
-    id("org.jetbrains.kotlin.android") version "1.8.22" apply false
+    id("com.android.application") version "9.1.0" apply false
+    id("org.jetbrains.kotlin.android") version "2.3.20" apply false
 }
 
 include(":app")

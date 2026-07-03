@@ -1,9 +1,10 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=C:\flutter3.32.7\flutter"
-export "FLUTTER_APPLICATION_PATH=C:\Users\china\Desktop\realtimekit_core-0.1.2+1\example"
+export "FLUTTER_ROOT=/Users/asd/Downloads/flutter3.44.2"
+export "FLUTTER_APPLICATION_PATH=/Users/asd/Desktop/realtime_kit/realtimekit_ui-0.4.0/example"
+export "FLUTTER_FRAMEWORK_SWIFT_PACKAGE_PATH=/Users/asd/Desktop/realtime_kit/realtimekit_ui-0.4.0/example/ios/Flutter/ephemeral/Packages/.packages/FlutterFramework"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
-export "FLUTTER_TARGET=lib\main.dart"
+export "FLUTTER_TARGET=lib/main.dart"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.0"
 export "FLUTTER_BUILD_NUMBER=1"
