@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:realtimekit_core/realtimekit_core.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,6 +11,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // using RealtimekitClient here just to fail the CI build if there is any issue with the dependency, incase flutter is lazily loading the package
+    // ignore: unused_local_variable
+    RealtimekitClient client = RealtimekitClient();
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(

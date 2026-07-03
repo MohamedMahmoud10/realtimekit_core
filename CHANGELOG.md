@@ -1,3 +1,19 @@
+## 0.1.6
+
+ - **FEAT**: bump version (#132).
+ - **FEAT**: bump version".
+ - **FEAT**: bump version.
+
+## 0.1.4
+
+ - **DOCS**: document participants object.
+ - **DOCS**: document public apis.
+
+## 0.1.3
+
+ - **FIX**: set iphone deployment target to 18.0.
+ - **FIX**: bump mobile-core-bridge to v1.7.1.
+
 ## 0.1.2+1
 
  - Update a dependency to the latest release.
