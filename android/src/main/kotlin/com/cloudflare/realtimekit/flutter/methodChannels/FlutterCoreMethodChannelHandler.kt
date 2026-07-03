@@ -94,6 +94,19 @@ class FlutterCoreMethodChannelHandler(
      */
     private val rtkClient: RtkClient get() = RtkClientProvider.requireRtkClient()
 
+    /**
+     * Nullable view of the current native client. Used by the `dispose*Listener`
+     * methods, which run from EventChannel `onCancel` during meeting teardown /
+     * re-subscribe (leave -> rejoin). At that point the client may legitimately be
+     * gone (in a complex host app the activity is detached/reattached and
+     * [RtkClientProvider] can be cleared). Disposal must never throw there: if
+     * there is no client there is nothing to unregister, so we still drop the
+     * listener reference. Throwing here aborts `onCancel`, leaves the old stream
+     * half-closed, and the rejoin gets stuck (see the "Failed to close existing
+     * event stream" crash).
+     */
+    private val rtkClientOrNull: RtkClient? get() = RtkClientProvider.rtkClient
+
     private var participantEventListener: ParticipantEventListener? = null
     private var meetingRoomEventListener: RoomEventListener? = null
     private var chatEventListener: ChatEventListener? = null
@@ -157,7 +170,7 @@ class FlutterCoreMethodChannelHandler(
 
     fun disposeChatListener(){
         if (chatEventListener != null) {
-            rtkClient.removeChatListener(chatEventListener!!)
+            rtkClientOrNull?.removeChatListener(chatEventListener!!)
             chatEventListener = null
         }
     }
@@ -187,7 +200,7 @@ class FlutterCoreMethodChannelHandler(
 
     fun disposeMeetingRoomListener(){
         if (meetingRoomEventListener != null) {
-            rtkClient.removeMeetingRoomEventListener(meetingRoomEventListener!!)
+            rtkClientOrNull?.removeMeetingRoomEventListener(meetingRoomEventListener!!)
             meetingRoomEventListener = null
         }
     }
@@ -216,7 +229,7 @@ class FlutterCoreMethodChannelHandler(
 
     fun disposeParticipantEventListenerListener(){
         if (participantEventListener != null) {
-            rtkClient.removeParticipantsEventListener(participantEventListener!!)
+            rtkClientOrNull?.removeParticipantsEventListener(participantEventListener!!)
             participantEventListener = null
         }
     }
@@ -246,7 +259,7 @@ class FlutterCoreMethodChannelHandler(
 
     fun disposeSelfListener(){
         if (selfEventListener != null) {
-            rtkClient.removeSelfEventListener(selfEventListener!!)
+            rtkClientOrNull?.removeSelfEventListener(selfEventListener!!)
             selfEventListener = null
         }
     }
@@ -275,7 +288,7 @@ class FlutterCoreMethodChannelHandler(
 
     fun disposePollsListener(){
         if (pollEventListener != null) {
-            rtkClient.removePollsEventListener(pollEventListener!!)
+            rtkClientOrNull?.removePollsEventListener(pollEventListener!!)
             pollEventListener = null
         }
 
@@ -305,7 +318,7 @@ class FlutterCoreMethodChannelHandler(
 
     fun disposePluginListener(){
         if (pluginEventListener != null) {
-            rtkClient.removePluginEventListener(pluginEventListener!!)
+            rtkClientOrNull?.removePluginEventListener(pluginEventListener!!)
             pluginEventListener = null
         }
     }
@@ -334,7 +347,7 @@ class FlutterCoreMethodChannelHandler(
 
     fun disposeDataListener(){
         if (dataEventListener != null) {
-            rtkClient.removeDataUpdateListener(dataEventListener!!)
+            rtkClientOrNull?.removeDataUpdateListener(dataEventListener!!)
             dataEventListener = null
         }
     }
@@ -365,7 +378,7 @@ class FlutterCoreMethodChannelHandler(
 
     fun disposeRecordingListener(){
         if (recordingEventListener != null) {
-            rtkClient.removeRecordingEventListener(recordingEventListener!!)
+            rtkClientOrNull?.removeRecordingEventListener(recordingEventListener!!)
             recordingEventListener = null
         }
     }
@@ -396,7 +409,7 @@ class FlutterCoreMethodChannelHandler(
 
     fun disposeWaitingRoomListener(){
         if (waitingRoomEventListener != null) {
-            rtkClient.removeWaitlistEventListener(waitingRoomEventListener!!)
+            rtkClientOrNull?.removeWaitlistEventListener(waitingRoomEventListener!!)
             waitingRoomEventListener = null
         }
     }
@@ -427,7 +440,7 @@ class FlutterCoreMethodChannelHandler(
 
     fun disposeLvsListener(){
         if (livestreamEventListener != null) {
-            rtkClient.removelivestreamEventListener(livestreamEventListener!!)
+            rtkClientOrNull?.removelivestreamEventListener(livestreamEventListener!!)
             livestreamEventListener = null
         }
     }
@@ -458,7 +471,7 @@ class FlutterCoreMethodChannelHandler(
 
     fun disposeStageListener(){
         if(stageEventListener !=null){
-            rtkClient.removeStageEventListener(stageEventListener!!)
+            rtkClientOrNull?.removeStageEventListener(stageEventListener!!)
             stageEventListener = null
         }
     }
