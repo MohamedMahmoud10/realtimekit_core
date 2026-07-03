@@ -2,6 +2,7 @@ package com.cloudflare.realtimekit.flutter
 
 import android.app.Activity
 import android.os.PowerManager
+import android.util.Log
 import android.view.WindowManager
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat.getSystemService
@@ -20,6 +21,7 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener {
@@ -45,6 +47,89 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
     private lateinit var participantUpdateEventChannel: EventChannel
 
     private var activity: Activity? = null
+
+    /**
+     * Whether the current native meeting client has already been used for a
+     * meeting (i.e. `init` was called on it). The client built at activity-attach
+     * is fresh, so it is reused as-is; once used it can never be re-`init()`'d, so
+     * we rebuild a fresh one when the meeting is released (see [rebuildMeetingClient]).
+     */
+    private var meetingClientUsed = false
+
+    /** Publishes the current native client so the handler and view factories
+     *  (which read dynamically) operate on the live instance. */
+    private fun publishClient() {
+        RtkClientProvider.rtkClient = rtkClientAndroid
+        RtkClientProvider.realtimeClient = realtimeClient
+    }
+
+    /**
+     * Builds a brand-new native meeting client so the *next* meeting starts on a
+     * clean instance. Called on `release` (i.e. when leaving a meeting), because
+     * the Cloudflare RealtimeKit SDK cannot re-`init()` a client once it has been
+     * used — a second `init()` never completes and the Flutter UI hangs forever
+     * on the loading spinner.
+     *
+     * Rebuilding here (on leave) rather than on the next `init` is deliberate: the
+     * next meeting re-attaches its event listeners *before* it calls `init`, so the
+     * fresh client must already be published by then, otherwise those listeners
+     * would bind to the old (discarded) client and the rejoin would still hang.
+     */
+    private fun rebuildMeetingClient() {
+        val currentActivity = activity ?: return
+        try {
+            rtkClientAndroid?.let { old ->
+                if (old.isRoomJoined) old.leaveRoom(onSuccess = {}) {}
+            }
+        } catch (e: Exception) {
+            Log.w("FlutterCorePlugin", "rebuildMeetingClient: leaving old room failed: ${e.message}")
+        }
+        realtimeClient = RealtimeKitMeetingBuilder.build(currentActivity)
+        rtkClientAndroid = RtkClient(realtimeClient)
+        publishClient()
+    }
+
+    /**
+     * Wraps the real method-call handler. Tracks when the client becomes "used"
+     * (on `init`) and, on `release`, rebuilds a fresh native client once the SDK
+     * finishes releasing the old one — so join -> leave -> join again works
+     * without an app restart. Everything else is delegated unchanged to the
+     * handler, which reads the live client from [RtkClientProvider].
+     */
+    private val methodCallInterceptor = object : MethodChannel.MethodCallHandler {
+        override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+            when (call.method) {
+                "init" -> {
+                    meetingClientUsed = true
+                    flutterCoreMethodChannelHandler?.onMethodCall(call, result)
+                        ?: result.notImplemented()
+                }
+                "release" -> {
+                    val wrapped = object : MethodChannel.Result {
+                        override fun success(res: Any?) {
+                            if (meetingClientUsed) {
+                                rebuildMeetingClient()
+                                meetingClientUsed = false
+                            }
+                            result.success(res)
+                        }
+
+                        override fun error(code: String, message: String?, details: Any?) {
+                            result.error(code, message, details)
+                        }
+
+                        override fun notImplemented() {
+                            result.notImplemented()
+                        }
+                    }
+                    flutterCoreMethodChannelHandler?.onMethodCall(call, wrapped)
+                        ?: result.notImplemented()
+                }
+                else -> flutterCoreMethodChannelHandler?.onMethodCall(call, result)
+                    ?: result.notImplemented()
+            }
+        }
+    }
 
     private fun setWakelock(enabled: Boolean) {
         activity?.runOnUiThread {
@@ -104,9 +189,9 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
         activity = binding.activity
         setWakelock(true)
         rtkClientAndroid = RtkClient(realtimeClient)
+        publishClient()
         if (flutterCoreMethodChannelHandler == null) {
             flutterCoreMethodChannelHandler = FlutterCoreMethodChannelHandler(
-                rtkClientAndroid!!,
                 flutterPluginBinding.applicationContext,
                 meetingRoomEventChannel = meetingRoomEventChannel,
                 chatEventChannel = chatEventChannel,
@@ -126,7 +211,7 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
             videoViewController = VideoViewController()
         }
         videoViewChannel.setMethodCallHandler(videoViewController)
-        channel.setMethodCallHandler(flutterCoreMethodChannelHandler)
+        channel.setMethodCallHandler(methodCallInterceptor)
         flutterPluginBinding.platformViewRegistry.registerViewFactory(
             "DytePlatformVideoView",
             RtkVideoViewFactory(
@@ -159,9 +244,11 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
         setWakelock(true)
         realtimeClient = RealtimeKitMeetingBuilder.build(binding.activity)
         rtkClientAndroid = RtkClient(realtimeClient)
+        publishClient()
+        // Freshly built client on reattach — let the next init reuse it as-is.
+        meetingClientUsed = false
         if (flutterCoreMethodChannelHandler == null) {
             flutterCoreMethodChannelHandler = FlutterCoreMethodChannelHandler(
-                rtkClientAndroid!!,
                 flutterPluginBinding.applicationContext,
                 meetingRoomEventChannel = meetingRoomEventChannel,
                 chatEventChannel = chatEventChannel,
@@ -177,7 +264,7 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
                 participantUpdateEventChannel = participantUpdateEventChannel
             )
         }
-        channel.setMethodCallHandler(flutterCoreMethodChannelHandler)
+        channel.setMethodCallHandler(methodCallInterceptor)
     }
 
     override fun onDetachedFromActivity() {
@@ -187,6 +274,9 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
             rtkClientAndroid?.leaveRoom(onSuccess = {}){}
             rtkClientAndroid = null
         }
+        meetingClientUsed = false
+        RtkClientProvider.rtkClient = null
+        RtkClientProvider.realtimeClient = null
         channel.setMethodCallHandler(null)
     }
 
@@ -196,6 +286,9 @@ class FlutterCorePlugin : FlutterPlugin, ActivityAware, EngineLifecycleListener 
         }
         rtkClientAndroid = null
         flutterCoreMethodChannelHandler = null
+        meetingClientUsed = false
+        RtkClientProvider.rtkClient = null
+        RtkClientProvider.realtimeClient = null
     }
 
     override fun onEngineWillDestroy() {

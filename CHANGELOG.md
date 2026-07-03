@@ -1,3 +1,8 @@
+## 0.1.6
+
+ - **FEAT**: bump version".
+ - **FEAT**: bump version.
+
 ## 0.1.4
 
  - **FIX**: use joined list instead of active for videoview creation.
