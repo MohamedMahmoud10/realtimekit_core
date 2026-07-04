@@ -871,13 +871,20 @@ public class SwiftFlutterCoreIosPlugin: NSObject, FlutterPlugin {
                 // once used; without this rebuild a join -> leave -> join again
                 // hangs forever on the loading spinner (only an app restart cured
                 // it before). Mirrors the Android rebuildMeetingClient() fix.
-                NSLog("[RTK-iOS] release: releaseMeeting SUCCESS -> disposing listeners + rebuilding client")
+                NSLog("[RTK-iOS] release: releaseMeeting SUCCESS -> dispose + rebuild")
                 self.disposeListeners()
                 RtkClientProvider.shared.rebuild()
                 result(true)
-            }, onReleaseFailed: { _ in
-                NSLog("[RTK-iOS] release: releaseMeeting FAILED")
-                result(false)
+            }, onReleaseFailed: { error in
+                // iOS reports releaseMeeting as "failed" on a normal leave, but we
+                // STILL must hand the next meeting a fresh client: reusing the spent
+                // one leaves the rejoin stuck on the loading/setup screen (its media
+                // session is already torn down). Rebuild regardless of the result.
+                NSLog("[RTK-iOS] release: releaseMeeting FAILED (%@) -> dispose + rebuild anyway",
+                      String(describing: error))
+                self.disposeListeners()
+                RtkClientProvider.shared.rebuild()
+                result(true)
             })
 
         case "getSelfActiveTab":
