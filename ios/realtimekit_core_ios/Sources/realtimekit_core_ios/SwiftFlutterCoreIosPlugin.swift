@@ -228,12 +228,16 @@ public class SwiftFlutterCoreIosPlugin: NSObject, FlutterPlugin {
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        NSLog("[RTK-iOS] handle -> %@", call.method)
         switch call.method {
         case "init":
             let meetingInfo = CoreRtkMeetingInfo.companion.fromMap(map: call.arguments as! [String: Any])
+            NSLog("[RTK-iOS] init: calling doInit on client %p", rtkClientIOS)
             rtkClientIOS.doInit(meetingInfo: meetingInfo) {
+                NSLog("[RTK-iOS] init: doInit SUCCESS")
                 result(nil)
             } onError: { error in
+                NSLog("[RTK-iOS] init: doInit ERROR code=%@", "\(error?.code.rawValue ?? -1)")
                 result(error?.code.rawValue)
             }
 
@@ -246,16 +250,22 @@ public class SwiftFlutterCoreIosPlugin: NSObject, FlutterPlugin {
             return result(nil)
 
         case "joinRoom":
+            NSLog("[RTK-iOS] joinRoom: calling joinRoom on client %p", rtkClientIOS)
             rtkClientIOS.joinRoom {
+                NSLog("[RTK-iOS] joinRoom: SUCCESS")
                 result(nil)
             } onError: { error in
+                NSLog("[RTK-iOS] joinRoom: ERROR code=%@", "\(error?.code.rawValue ?? -1)")
                 result(error?.code.rawValue)
             }
 
         case "leaveRoom":
+            NSLog("[RTK-iOS] leaveRoom: calling")
             rtkClientIOS.leaveRoom {
+                NSLog("[RTK-iOS] leaveRoom: SUCCESS")
                 result(nil)
             } onError: { error in
+                NSLog("[RTK-iOS] leaveRoom: ERROR code=%@", "\(error?.code.rawValue ?? -1)")
                 result(error?.code.rawValue)
             }
 
@@ -861,10 +871,12 @@ public class SwiftFlutterCoreIosPlugin: NSObject, FlutterPlugin {
                 // once used; without this rebuild a join -> leave -> join again
                 // hangs forever on the loading spinner (only an app restart cured
                 // it before). Mirrors the Android rebuildMeetingClient() fix.
+                NSLog("[RTK-iOS] release: releaseMeeting SUCCESS -> disposing listeners + rebuilding client")
                 self.disposeListeners()
                 RtkClientProvider.shared.rebuild()
                 result(true)
             }, onReleaseFailed: { _ in
+                NSLog("[RTK-iOS] release: releaseMeeting FAILED")
                 result(false)
             })
 

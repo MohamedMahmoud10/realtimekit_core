@@ -1,3 +1,4 @@
+import Foundation
 import RealtimeKitFlutterCoreKMM
 
 /// Single source of truth for the *current* native meeting client.
@@ -23,6 +24,7 @@ final class RtkClientProvider {
 
     private init() {
         client = RtkClientBuilder().build()
+        NSLog("[RTK-iOS] RtkClientProvider: built initial client %p", client)
     }
 
     /// Convenience accessor for the underlying mobile-core client that the
@@ -35,5 +37,6 @@ final class RtkClientProvider {
     /// `doInit` never completes and the Flutter UI hangs on the loading spinner.
     func rebuild() {
         client = RtkClientBuilder().build()
+        NSLog("[RTK-iOS] RtkClientProvider: REBUILT client %p", client)
     }
 }
