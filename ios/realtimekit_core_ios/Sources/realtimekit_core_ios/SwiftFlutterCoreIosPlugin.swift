@@ -5,7 +5,10 @@ import UIKit
 import RealtimeKitFlutterCoreKMM
 
 public class SwiftFlutterCoreIosPlugin: NSObject, FlutterPlugin {
-    let rtkClientIOS: RtkClient
+    // Reads the *current* native client dynamically from the shared holder so
+    // that after a meeting is released and the client is rebuilt (to support
+    // join -> leave -> join again) every call here talks to the live client.
+    var rtkClientIOS: RtkClient { RtkClientProvider.shared.client }
 
     var methodChannel: FlutterMethodChannel?
     let participantsEventChannel: FlutterEventChannel
@@ -47,8 +50,8 @@ public class SwiftFlutterCoreIosPlugin: NSObject, FlutterPlugin {
     var stageEventsHandler: StageEventsHandler?
 
     init(participantsEventChannel: FlutterEventChannel, roomEventsChannel: FlutterEventChannel, selfParticipantChannel: FlutterEventChannel, pluginEventsChannel: FlutterEventChannel, chatEventsChannel: FlutterEventChannel, pollEventsChannel: FlutterEventChannel, recordingEventsChannel: FlutterEventChannel, waitlistEventsChannel: FlutterEventChannel, livestreamEventsChannel: FlutterEventChannel, stageEventsChannel: FlutterEventChannel, dataEventsChannel: FlutterEventChannel, participantUpdateEventsChannel _: FlutterEventChannel) {
-        rtkClientIOS = RtkClientBuilder().build()
-
+        // The native client now lives in RtkClientProvider (built lazily and
+        // rebuilt on release); nothing to build here.
         methodChannel = FlutterMethodChannel()
         self.participantsEventChannel = participantsEventChannel
         self.roomEventsChannel = roomEventsChannel
@@ -852,7 +855,15 @@ public class SwiftFlutterCoreIosPlugin: NSObject, FlutterPlugin {
 
         case "release":
             rtkClientIOS.releaseMeeting(onReleaseSuccess: {
-                self.disposeListeners(); result(true)
+                // Remove listeners from the *old* client first (rtkClientIOS still
+                // resolves to it here), then rebuild a fresh native client so the
+                // NEXT meeting starts clean. The KMM client cannot be re-doInit()'d
+                // once used; without this rebuild a join -> leave -> join again
+                // hangs forever on the loading spinner (only an app restart cured
+                // it before). Mirrors the Android rebuildMeetingClient() fix.
+                self.disposeListeners()
+                RtkClientProvider.shared.rebuild()
+                result(true)
             }, onReleaseFailed: { _ in
                 result(false)
             })

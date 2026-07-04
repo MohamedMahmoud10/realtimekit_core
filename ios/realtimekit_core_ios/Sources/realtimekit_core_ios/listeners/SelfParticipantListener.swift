@@ -3,14 +3,14 @@ import RealtimeKitFlutterCoreKMM
 
 class SelfParticipantEventsHandler: NSObject, FlutterStreamHandler, RtkEventsHandler {
     var eventSinkWrapper: EventSinkWrapper?
-    var rtkClient: RtkClient
+    // Live client from the shared holder (rebuilt on rejoin) — always current.
+    var rtkClient: RtkClient { RtkClientProvider.shared.client }
     var listener: SelfParticipantListener?
     let plugin: SwiftFlutterCoreIosPlugin
 
     var defaultSink: FlutterEventSink?
 
     init(rtkClient: RtkClient, plugin: SwiftFlutterCoreIosPlugin) {
-        self.rtkClient = rtkClient
         self.plugin = plugin
     }
 

@@ -3,11 +3,12 @@ import RealtimeKitFlutterCoreKMM
 
 class RtkVideoViewFactory: NSObject, FlutterPlatformViewFactory {
     private var messenger: FlutterBinaryMessenger
-    let mobileClient: CoreRealtimeKitClient
+    // Read the live client dynamically so views created after a rejoin (which
+    // rebuilds the native client) bind to the current client, not a stale one.
+    var mobileClient: CoreRealtimeKitClient { RtkClientProvider.shared.core }
 
-    init(messenger: FlutterBinaryMessenger, client: CoreRealtimeKitClient) {
+    init(messenger: FlutterBinaryMessenger, client _: CoreRealtimeKitClient) {
         self.messenger = messenger
-        mobileClient = client
         super.init()
     }
 

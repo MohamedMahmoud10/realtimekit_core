@@ -2,11 +2,11 @@ import Flutter
 import RealtimeKitFlutterCoreKMM
 
 class RtkPluginViewFactory: NSObject, FlutterPlatformViewFactory {
-    let mobileClient: CoreRealtimeKitClient
+    // Read the live client dynamically so views created after a rejoin (which
+    // rebuilds the native client) bind to the current client, not a stale one.
+    var mobileClient: CoreRealtimeKitClient { RtkClientProvider.shared.core }
 
-    init(client: CoreRealtimeKitClient) {
-        mobileClient = client
-    }
+    init(client _: CoreRealtimeKitClient) {}
 
     func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
         return FlutterStandardMessageCodec.sharedInstance()
